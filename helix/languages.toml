@@ -5,5 +5,5 @@ auto-format = true
 
 [[language]]
 name = "latex"
-formatter = { command = "tex-fmt", args = ["fmt", "--stdin", "tex"]}
+formatter = { command = "tex-fmt", args = ["--stdin"]}
 auto-format = true
