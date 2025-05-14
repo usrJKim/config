@@ -1,0 +1,22 @@
+theme = "kanagawa"
+
+[editor]
+line-number = "relative"
+scrolloff = 5
+mouse = true
+bufferline = "multiple"
+color-modes = true
+
+[editor.statusline]
+right = ["diagnostics", "file-type", "register", "file-encoding"]
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.file-picker]
+hidden = false
+
+[keys.normal]
+C-g = [":new", ":insert-output lazygit", ":buffer-close!", ":redraw", ":rla"]
