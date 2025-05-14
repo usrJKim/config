@@ -2,3 +2,8 @@
 name = "markdown"
 formatter = { command = "dprint", args = ["fmt", "--stdin", "md"] }
 auto-format = true
+
+[[language]]
+name = "latex"
+formatter = { command = "tex-fmt", args = ["fmt", "--stdin", "tex"]}
+auto-format = true
