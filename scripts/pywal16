@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+ln -sf ~/.cache/wal/picom.conf ~/.config/picom/picom.conf
+ln -sf ~/.cache/wal/dunstrc ~/.config/dunst/dunstrc
+
+recompileslock
+
+pkill dunst; setsid -f dunst
+refresh
+
+notify-send "Wallpaper and colorscheme changed; setting rgb value"
+sudo openrgb --noautoconnect -c $(tail -c +2 ~/.cache/wal/rgb) -b 65
