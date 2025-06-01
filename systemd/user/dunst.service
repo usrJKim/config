@@ -1,0 +1,10 @@
+[Unit]
+Description=dunst notifications service
+[Service]
+Type=Simple
+BusName=org.freedesktop.Notifications
+ExecStart=/usr/bin/dunst
+ExecStop=/usr/bin/pkill dunst
+Restart=on-failure
+[Install]
+WantedBy=default.target

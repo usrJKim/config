@@ -1,0 +1,20 @@
+[global]
+font = SpoqaHanSansNeo 11
+frame_color = "{color14}"
+separator_color= frame
+
+[frame]
+width = 3
+
+[urgency_low]
+background = "{background}"
+foreground = "{foreground}"
+
+[urgency_normal]
+background = "{background}"
+foreground = "{foreground}"
+
+[urgency_critical]
+background = "{background}"
+foreground = "{foreground}"
+frame_color = "{color5}"

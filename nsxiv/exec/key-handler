@@ -1,0 +1,3 @@
+# Save image path to a file
+bind C-x w file_write_path
+
