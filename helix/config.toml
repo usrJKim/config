@@ -1,8 +1,8 @@
-theme = "gruvbox_dark_hard"
+theme = "monokai_pro_ristretto"
 
 [editor]
 line-number = "relative"
-scrolloff = 5
+scrolloff = 8
 mouse = true
 bufferline = "multiple"
 color-modes = true

@@ -1,6 +1,3 @@
-2025/06/01-18:32:16.252 605e3 Reusing MANIFEST /home/junho/.config/discord/Local Storage/leveldb/MANIFEST-000001
-2025/06/01-18:32:16.262 605e3 Recovering log #4
-2025/06/01-18:32:16.262 605e3 Reusing old log /home/junho/.config/discord/Local Storage/leveldb/000004.log 
-2025/06/01-18:35:45.553 605e4 Level-0 table #8: started
-2025/06/01-18:35:45.614 605e4 Level-0 table #8: 1040939 bytes OK
-2025/06/01-18:35:45.617 605e4 Delete type=0 #4
+2025/06/05-23:11:40.017 61057 Reusing MANIFEST /home/junho/.config/discord/Local Storage/leveldb/MANIFEST-000001
+2025/06/05-23:11:40.027 61057 Recovering log #35
+2025/06/05-23:11:40.027 61057 Reusing old log /home/junho/.config/discord/Local Storage/leveldb/000035.log 
