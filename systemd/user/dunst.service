@@ -1,0 +1,15 @@
+[Unit]
+Description=Dunst notification daemon
+PartOf=graphical-session.target
+After=graphical-session.target
+After=xorg.target
+
+[Service]
+ExecStart=/usr/bin/dunst
+Restart=on-failure
+Type=dbus
+BusName=org.freedesktop.Notifications
+
+[Install]
+WantedBy=default.target
+
