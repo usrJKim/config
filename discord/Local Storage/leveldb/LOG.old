@@ -1,8 +1,0 @@
-2025/06/04-23:29:08.563 cfe3 Reusing MANIFEST /home/junho/.config/discord/Local Storage/leveldb/MANIFEST-000001
-2025/06/04-23:29:08.577 cfe3 Recovering log #30
-2025/06/04-23:29:08.600 cfe3 Level-0 table #33: started
-2025/06/04-23:29:08.620 cfe3 Level-0 table #33: 1056925 bytes OK
-2025/06/04-23:29:08.623 cfe3 Delete type=0 #30
-2025/06/04-23:32:38.837 cfe3 Level-0 table #36: started
-2025/06/04-23:32:38.895 cfe3 Level-0 table #36: 1037580 bytes OK
-2025/06/04-23:32:38.898 cfe3 Delete type=0 #34
