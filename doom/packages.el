@@ -30,12 +30,12 @@
 (package! org-appear)
 (package! valign)
 (package! org-ql)
-(package! org-download)
 (package! org-alert)
+(package! org-download)
 (package! olivetti)
 (package! doom-nano-modeline
   :recipe (:host github
-  :repo "ronisbr/doom-nano-modeline"))
+           :repo "ronisbr/doom-nano-modeline"))
 (package! org-habit-stats)
 ;; You can override the recipe of a built in package without having to specify
 ;; all the properties for `:recipe'. These will inherit the rest of its recipe

@@ -19,6 +19,8 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 ;;
+
+(unless (facep 'quote) (make-face 'quote))
 (setq doom-font (font-spec :family "Victor Mono" :size 20 )
       doom-variable-pitch-font (font-spec :family "Roboto" :size 20))
 (setq-default line-spacing 2)
@@ -53,6 +55,7 @@
       :ni "C-z" #'vterm-send-C-z
       :ni "C-d" #'vterm-send-C-d)
 
+
 (dolist (map '(minibuffer-local-map
                minibuffer-local-completion-map
                minibuffer-local-filename-completion-map
@@ -64,7 +67,7 @@
   ;; 이미지를 써서 렌더 (폰트 말고 PNG)
   (setq emojify-display-style 'image)               ;; :contentReference[oaicite:0]{index=0}
   ;; 유니코드 이모지 + :smile: 같은 깃허브식도 인식
-  (setq emojify-emoji-styles '(unicode github))     ;; :contentReference[oaicite:1]{index=1}
+  ;; (setq emojify-emoji-styles '(unicode github))     ;; :contentReference[oaicite:1]{index=1}
   ;; 사용할 이미지 세트: 트위터의 Twemoji v2
   (setq emojify-emoji-set "twemoji-v2")             ;; :contentReference[oaicite:2]{index=2}
   ;; 이미지가 없으면 자동으로 받도록
@@ -82,6 +85,7 @@
 
 (add-to-list 'custom-theme-load-path "/home/junho/.config/doom/themes/")
 ;; (setq doom-theme 'doom-monokai-pro)
+;; (setq doom-theme 'doom-nano-light)
 (setq doom-theme 'doom-nano-dark)
 
 ;; dark-thene
@@ -176,14 +180,49 @@
         (make-directory build t)))))
 (add-hook 'LaTeX-mode-hook #'my/latex-ensure-build-dir)
 
-(require 'org-alert)
-(setq alert-default-style 'libnotify)
-(setq org-alert-interval 300
-      org-alert-notify-cutoff 10
-      org-alert-notify-after-event-cutoff 10)
-
 (after! org
+  (setq org-image-align 'center)
+  (plist-put org-format-latex-options :justify 'center)
+
+  (defun org-justify-fragment-overlay (beg end image imagetype)
+    "Adjust the justification of a LaTeX fragment.
+The justification is set by :justify in
+`org-format-latex-options'. Only equations at the beginning of a
+line are justified."
+    (cond
+     ;; Centered justification
+     ((and (eq 'center (plist-get org-format-latex-options :justify))
+           (= beg (line-beginning-position)))
+      (let* ((img (create-image image 'imagemagick t))
+             (width (car (image-size img)))
+             (offset (floor (- (/ (window-text-width) 2) (/ width 2)))))
+        (overlay-put (ov-at) 'before-string (make-string offset ? ))))
+     ;; Right justification
+     ((and (eq 'right (plist-get org-format-latex-options :justify))
+           (= beg (line-beginning-position)))
+      (let* ((img (create-image image 'imagemagick t))
+             (width (car (image-display-size (overlay-get (ov-at) 'display))))
+             (offset (floor (- (window-text-width) width (- (line-end-position) end)))))
+        (overlay-put (ov-at) 'before-string (make-string offset ? ))))))
+
+  (defun org-latex-fragment-tooltip (beg end image imagetype)
+    "Add the fragment tooltip to the overlay and set click function to toggle it."
+    (overlay-put (ov-at) 'help-echo
+                 (concat (buffer-substring beg end)
+                         "mouse-1 to toggle."))
+    (overlay-put (ov-at) 'local-map (let ((map (make-sparse-keymap)))
+                                      (define-key map [mouse-1]
+                                                  `(lambda ()
+                                                     (interactive)
+                                                     (org-remove-latex-fragment-image-overlays ,beg ,end)))
+                                      map)))
+
+  ;; advise the function to a
+  (advice-add 'org--format-latex-make-overlay :after 'org-justify-fragment-overlay)
+  (advice-add 'org--format-latex-make-overlay :after 'org-latex-fragment-tooltip)
+
   (require 'org-indent)
+  (add-hook 'org-mode-hook #'org-indent-mode)
   (require 'org-element)
   (defun writer-mode--num-format (numbering)
     "Alternative numbering format for org-num.
@@ -238,11 +277,10 @@ etc.
         (aset org-indent--text-line-prefixes n
               (make-string indent ?\s)))))
 
-  (add-hook 'org-mode-hook #'org-indent-mode)
   (add-hook 'org-mode-hook (lambda () (display-line-numbers-mode -1)))
   (add-hook 'org-mode-hook (lambda () (vi-tilde-fringe-mode -1)))
   (setq org-directory "~/org/"
-        org-agenda-files '("~/org/daily" "~/org/roam/notes/습관.org")
+        org-agenda-files '("~/org/" "~/org/daily/" "~/org/roam/notes/" "~/org/roam/projects/")
         org-roam-directory (expand-file-name "roam" org-directory)
         org-roam-db-location (expand-file-name "org-roam.db" org-roam-directory)
         org-roam-completion-everywhere t)
@@ -268,6 +306,7 @@ etc.
                            :family "Roboto Slab"
                            :height 200
                            :weight 'medium)
+
   (setq-local org-hidden-keywords '(title author date startup))
 
   (setq header-line-format nil)
@@ -279,7 +318,17 @@ etc.
     '(org-block :inherit nil :family "Victor Mono")
     '(org-block-begin-line :inherit nil :family "Victor Mono")
     '(org-block-end-line :inherit nil :family "Victor Mono")
+    '(org-table :inherit nil :family "Victor Mono")
+    '(org-modern-checkbox :inherit (org-checkbox fixed-pitch)
+      :foreground unspecified
+      :background unspecified)
+    '(org-checkbox :inherit (fixed-pitch) :foreground unspecified
+      :background unspecified)
+    '(org-code :inherit nil :family "Viictor Mono")
+    '(org-verbatim :inherit nil :family "Victor Mono")
+    '(org-formula :inherit nil :family "Victor Mono")
     )
+
   (setq org-src-fontify-natively t
         org-src-preserve-indentation t
         org-edit-src-content-indentation 0)
@@ -312,8 +361,8 @@ etc.
     (setq org-num-format-function 'writer-mode--num-format)
     )
 
+  (define-key org-mode-map (kbd "C-c >") 'org-timestamp-inactive)
   )
-
 (add-hook 'org-mode-hook 'olivetti-mode)
 
 (after! org
@@ -322,7 +371,24 @@ etc.
 
 (after! org-agenda
   (define-key org-agenda-mode-map (kbd "C-c h") 'org-habit-stats-view-habit-at-point-agenda)
+  (setq org-agenda-custom-commands
+        '(("w" "Weekly Agenda"
+           ((agenda "" ((org-agenda-span 7)
+                        (org-deadline-warning-days 7)))
+            (todo ""
+                  ((org-agenda-overriding-header "TODOs"))))))
+        org-agenda-block-separator " ")
   )
+
+(use-package! org-alert
+  :custom (alert-default-style 'libnotify)
+  :config
+  (setq org-alert-interval 300
+        org-alert-notify-cutoff 15
+        org-alert-notify-after-event-cutoff 5
+        org-alert-notification-title "Org Alert"
+        org-alert-time-match-string "\\(?:SCHEDULED\\|DEADLINE\\):.*?<.*?\\([0-9]\\{2\\}:[0-9]\\{2\\}\\).*>")
+  (org-alert-enable))
 
 (use-package! org-ql
   :after org
@@ -341,12 +407,6 @@ etc.
       :desc "org-download"         "n d"   nil
       :desc "org-download clipboard""n d c" #'org-download-clipboard)
 
-(map! "C-c n f" #'org-roam-node-find
-      "C-c n i" #'org-roam-node-insert
-      "C-c n l" #'org-roam-buffer-toggle
-      "C-c n c" #'org-roam-capture
-      "C-c n g" #'org-roam-graph
-      "C-c n u" #'org-roan-ui-open)
 
 ;; 캡처 템플릿(기본/문헌/프로젝트)
 (after! org-roam
@@ -367,7 +427,7 @@ etc.
                               "#+title: ${title}\n#+filetags: :paper:\n")
            :unnarrowed t)
           ("j" "project" plain
-           "* ${title}\n:PROPERTIES:\n:TYPE: project\n:OWNER: %^{owner}\n:DUE: %^{due}\n:STATUS: %^{status|TODO|DOING|DONE}\n:END:\n\n%?"
+           "* ${title}\n:PROPERTIES:\n:TYPE: project\n:STATUS: %^{status|TODO|DOING|DONE}\n:END:\n\n%?"
            :if-new (file+head "projects/${slug}.org"
                               "#+title: ${title}\n#+filetags: :project:\n")
            :unnarrowed t)))
@@ -397,26 +457,23 @@ etc.
 (use-package! org-modern
   :hook ((org-agenda-finalize . org-modern-agenda))
   :config
-  (setq org-modern-hide-stars t
-        org-modern-block-fringe 8
+  (setq org-modern-block-fringe 8
         org-modern-checkbox '((?X . "✅") (?- . "⬛") (?\s . "⬜"))
         org-modern-list '((?* . "•") (?+ . "•") (?- . "•"))
-        ;; org-modern-table-horizontal 1
-        ;; org-modern-table-vertical 1
         org-modern-block-fringe t
         org-modern-block-name t
+        org-modern-table nil
+        org-modern-table-horizontal ?_
+        org-modern-table-vertical 3
         org-modern-todo t)
-  (custom-set-faces!
-    '(org-modern-checkbox :inherit (org-checkbox fixed-pitch)
-      :foreground unspecified
-      :background unspecified)
-    '(org-checkbox :inherit (fixed-pitch) :foreground unspecified
-      :background unspecified))
   )
 
+
 ;; valign: 표 열 정렬 (GUI only)
-(use-package! valign
-  :hook (org-mode . valign-mode))
+(when (display-graphic-p)
+  (use-package! valign
+    :hook (org-mode . valign-mode))
+  )
 
 ;; org-appear: 링크/특수문자 편집 시 자동 표시
 (use-package! org-appear
