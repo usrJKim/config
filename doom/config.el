@@ -88,7 +88,7 @@
 ;; (setq doom-theme 'doom-nano-light)
 (setq doom-theme 'doom-nano-dark)
 
-;; dark-thene
+;; dark-theme
 (setq nano-color-faded "#677691")
 (setq nano-color-subtle "#434C5E")
 (setq nano-color-foreground "#ECEFF4")
@@ -97,13 +97,21 @@
 ;; (setq nano-color-subtle "ECEFF1")
 ;; (setq nano-color-foreground "37474F")
 
-(setq doom-modeline-height 45)
-;; (remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
+;;===============Define theme changing function==================
+;; (add-hook 'c-mode-hook (lambda () (load-theme 'doom-monokai-pro t)))
+;; (add-hook 'python-mode-hook (lambda () (load-theme 'doom-monokai-pro t)))
+;; (add-hook 'cuda-mode-hook (lambda () (load-theme 'doom-monokai-pro t)))
+;; (add-hook 'tex-mode-hook (lambda () (load-theme 'doom-monokai-pro t)))
+;; (add-hook 'org-mode-hook (lambda () (load-theme 'doom-nano-dark t)))
+;; (add-hook 'emacs-lisp-mode-hook (lambda () (load-theme 'doom-nano-dark t)))
+
+;; (setq doom-modeline-height 45)
+(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
 (remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-footer)
-;; (add-hook! '+doom-dashboard-functions (hide-mode-line-mode 1))
+
+(add-hook! '+doom-dashboard-functions (hide-mode-line-mode 1))
 (setq fancy-splash-image "/home/junho/Pictures/mandu.png")
-(assoc-delete-all "Open private configuration" +doom-dashboard-menu-sections)
-(assoc-delete-all "Open documentation" +doom-dashboard-menu-sections)
+
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type `relative)
@@ -114,10 +122,6 @@
   :config
   (doom-nano-modeline-mode 1)
   (global-hide-mode-line-mode 1))
-
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
 
 (setq make-backup-files nil
       auto-save-default nil)
@@ -280,7 +284,7 @@ etc.
   (add-hook 'org-mode-hook (lambda () (display-line-numbers-mode -1)))
   (add-hook 'org-mode-hook (lambda () (vi-tilde-fringe-mode -1)))
   (setq org-directory "~/org/"
-        org-agenda-files '("~/org/" "~/org/daily/" "~/org/roam/notes/" "~/org/roam/projects/")
+        org-agenda-files '("~/org/" "~/org/roam/notes/habit.org" "~/org/roam/projects/")
         org-roam-directory (expand-file-name "roam" org-directory)
         org-roam-db-location (expand-file-name "org-roam.db" org-roam-directory)
         org-roam-completion-everywhere t)
@@ -367,6 +371,7 @@ etc.
 
 (after! org
   (define-key org-mode-map (kbd "C-c h") 'org-habit-stats-view-habit-at-point)
+  (add-hook 'org-after-todo-state-change-hook 'org-habit-stats-update-properties)
   )
 
 (after! org-agenda
@@ -377,7 +382,8 @@ etc.
                         (org-deadline-warning-days 7)))
             (todo ""
                   ((org-agenda-overriding-header "TODOs"))))))
-        org-agenda-block-separator " ")
+        )
+  ;; org-agenda-block-separator " ")
   )
 
 (use-package! org-alert
@@ -431,12 +437,21 @@ etc.
            :if-new (file+head "projects/${slug}.org"
                               "#+title: ${title}\n#+filetags: :project:\n")
            :unnarrowed t)))
-  (setq org-roam-dailies-directory "~/org/daily/"
+  (setq org-roam-dailies-directory "~/org/roam/daily/"
         org-roam-dailies-capture-templates
         '(("d" "default" entry
            "* %?\n%U"
            :if-new (file+head "%<%Y-%m-%d>.org"
-                              "#+title: %<%Y-%m-%d>\n")))))
+                              "#+title: %<%Y-%m-%d>
+* CHECK
+- [ ] 어제 운동했나? 아니라면, 이유를 생각해보자.
+- [ ] 어제 과식하진 않았나? 했다면, 이유를 생각해보자.
+- [ ] 어제 일에 집중했나? 아니라면, 이유를 생각해보자.
+- [ ] 어제 생기있었나? 아니라면, 이유를 생각해보자.
+- [ ] 아침에 상쾌하게 일어났나? 아니라면, 이유를 생각해보자.
+- [ ] 어제 사랑하는 사람과 대화를 나눴나? 아니라면, 이유를 생각해보자.
+- [ ] 오늘 아침 죽었다면, 지난 세월을 타인에게 자랑할 수 있는가? 아니라면, 이유를 생각해보자.\n")
+           ))))
 
 ;; org-roam-ui (선택)
 (use-package! org-roam-ui
